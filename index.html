@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinTech Tycoon - Digital Finance Challenge</title>
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#0f172a,#172554);color:#e5e7eb;min-height:100vh}
+.container{max-width:1050px;margin:auto;padding:24px}.card{background:#111827;border:1px solid #334155;border-radius:18px;padding:22px;box-shadow:0 12px 35px rgba(0,0,0,.25)}
+h1,h2{margin-top:0}.hero{text-align:center;padding:30px}.hero h1{font-size:42px;margin-bottom:8px}.hero p{color:#cbd5e1;font-size:17px}
+button{border:0;border-radius:10px;padding:12px 18px;background:#2563eb;color:white;font-weight:700;cursor:pointer;margin:6px 4px}button:hover{filter:brightness(1.12)}
+.hidden{display:none}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.stat{background:#1e293b;border-radius:12px;padding:14px;text-align:center}.stat b{display:block;font-size:22px;margin-top:5px}
+.progress{height:10px;background:#334155;border-radius:10px;overflow:hidden}.bar{height:100%;background:#22c55e;width:0%;transition:.4s}
+.option{display:block;width:100%;text-align:left;background:#1e293b;border:1px solid #475569;margin:10px 0}.option:hover{background:#334155}
+.feedback{padding:14px;border-radius:10px;margin-top:15px;background:#172554}.good{background:#14532d}.bad{background:#7f1d1d}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}.small{color:#94a3b8;font-size:14px}
+.badge{display:inline-block;padding:6px 10px;border-radius:20px;background:#334155;margin:4px}
+@media(max-width:700px){.stats,.grid{grid-template-columns:1fr 1fr}.hero h1{font-size:32px}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<section id="start" class="card hero">
+  <div style="font-size:55px">💳📱🏦</div>
+  <h1>FinTech Tycoon</h1>
+  <p><b>Digital Finance Challenge</b></p>
+  <p>Build a successful FinTech company by making smart decisions about digital payments, loans, investments and cybersecurity.</p>
+  <div class="grid">
+    <div class="card"><b>💰 Starting Capital</b><br><span class="small">₹10,00,000 virtual money</span></div>
+    <div class="card"><b>🎯 Objective</b><br><span class="small">Grow your company while protecting customers</span></div>
+  </div>
+  <button onclick="startGame()">🚀 Start Game</button>
+</section>
+
+<section id="game" class="hidden">
+  <div class="stats">
+    <div class="stat">Capital<b id="money">₹10,00,000</b></div>
+    <div class="stat">Customers<b id="customers">100</b></div>
+    <div class="stat">Security<b id="security">50</b>/100</div>
+    <div class="stat">Score<b id="score">0</b></div>
+  </div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
+      <div><span class="small">LEVEL <span id="level">1</span> / 8</span><h2 id="title"></h2></div>
+      <span class="badge" id="category">Payments</span>
+    </div>
+    <div class="progress"><div class="bar" id="bar"></div></div>
+    <p id="question"></p>
+    <div id="options"></div>
+    <div id="feedback" class="feedback hidden"></div>
+    <button id="next" class="hidden" onclick="nextQuestion()">Continue →</button>
+  </div>
+</section>
+
+<section id="end" class="card hero hidden">
+  <div style="font-size:60px">🏆</div>
+  <h1 id="finalTitle">FinTech Tycoon</h1>
+  <p id="finalText"></p>
+  <div class="stats">
+    <div class="stat">Final Capital<b id="fmoney"></b></div>
+    <div class="stat">Customers<b id="fcustomers"></b></div>
+    <div class="stat">Security<b id="fsecurity"></b></div>
+    <div class="stat">Score<b id="fscore"></b></div>
+  </div>
+  <p id="achievement"></p>
+  <button onclick="location.reload()">🔄 Play Again</button>
+</section>
+</div>
+
+<script>
+const questions=[
+{title:"UPI Payment",cat:"Digital Payments",q:"A customer wants to make a UPI payment. Which practice is safest?",opts:["Share the UPI PIN with the merchant","Enter the UPI PIN only on the trusted payment screen","Send the PIN by SMS","Save the PIN in a public note"],correct:1,good:"Correct! A UPI PIN should never be shared.",money:20000,score:15,sec:5,cust:10},
+{title:"Fraud Alert",cat:"Cybersecurity",q:"A customer receives a message saying: 'Your bank account will be blocked. Click this link and enter your OTP.' What should your company advise?",opts:["Click the link immediately","Share the OTP with the caller","Do not share the OTP; verify through the official app or bank","Forward the OTP to customer support"],correct:2,good:"Correct! OTPs and banking credentials must not be shared.",money:25000,score:20,sec:15,cust:12},
+{title:"Digital Loan",cat:"Digital Lending",q:"Before approving a digital loan, what should the FinTech platform primarily evaluate?",opts:["Customer's favourite colour","Creditworthiness and repayment capacity","Number of social-media followers","Phone wallpaper"],correct:1,good:"Correct! Responsible lending considers creditworthiness and ability to repay.",money:30000,score:18,sec:4,cust:8},
+{title:"Investment Choice",cat:"Investment",q:"A customer wants to invest all their money in one highly volatile asset. What is a basic risk-management suggestion?",opts:["Put everything into it","Diversify across suitable investments","Borrow more money first","Ignore the risk"],correct:1,good:"Correct! Diversification can help manage concentration risk.",money:20000,score:18,sec:3,cust:6},
+{title:"Payment Failure",cat:"Payments",q:"Your payment system is temporarily unavailable. What should your company do first?",opts:["Hide the issue","Inform users and work to restore service securely","Delete transaction records","Ask customers for their passwords"],correct:1,good:"Correct! Transparent communication and secure recovery protect customers.",money:15000,score:15,sec:8,cust:8},
+{title:"Data Privacy",cat:"Data Protection",q:"Which approach is appropriate when collecting customer financial data?",opts:["Collect everything without purpose","Collect necessary data and protect it appropriately","Sell customer data publicly","Post account details online"],correct:1,good:"Correct! Data collection should be purposeful and handled securely.",money:22000,score:18,sec:12,cust:7},
+{title:"Customer Service",cat:"Customer Experience",q:"A customer reports an unauthorized transaction. What is the best first response?",opts:["Ignore the complaint","Ask them to post their account details publicly","Securely verify the report and guide them through the official dispute process","Blame the customer"],correct:2,good:"Correct! A secure complaint and dispute process helps protect the customer.",money:18000,score:17,sec:10,cust:10},
+{title:"FinTech Growth",cat:"Business Strategy",q:"Your company has extra funds. Which approach supports sustainable growth?",opts:["Spend everything immediately","Invest in security, technology and responsible expansion","Remove all security checks","Give random loans without assessment"],correct:1,good:"Correct! Sustainable FinTech growth balances innovation, security and responsible operations.",money:40000,score:25,sec:15,cust:15}
+];
+
+let i=0,money=1000000,customers=100,security=50,score=0,answered=false;
+const rupee=n=>"₹"+Math.max(0,Math.round(n)).toLocaleString("en-IN");
+
+function startGame(){document.getElementById("start").classList.add("hidden");document.getElementById("game").classList.remove("hidden");showQuestion();}
+function showQuestion(){
+ answered=false; const x=questions[i];
+ document.getElementById("level").textContent=i+1; document.getElementById("title").textContent=x.title;
+ document.getElementById("category").textContent=x.cat; document.getElementById("question").textContent=x.q;
+ document.getElementById("bar").style.width=((i)/questions.length*100)+"%";
+ document.getElementById("feedback").classList.add("hidden");document.getElementById("next").classList.add("hidden");
+ const box=document.getElementById("options");box.innerHTML="";
+ x.opts.forEach((o,n)=>{let b=document.createElement("button");b.className="option";b.textContent=(String.fromCharCode(65+n)+". "+o);b.onclick=()=>answer(n);box.appendChild(b);});
+ update();
+}
+function answer(n){
+ if(answered)return; answered=true; const x=questions[i], correct=n===x.correct;
+ if(correct){money+=x.money;customers+=x.cust;security=Math.min(100,security+x.sec);score+=x.score}
+ else {money-=25000;customers=Math.max(0,customers-10);security=Math.max(0,security-10);score=Math.max(0,score-10)}
+ const f=document.getElementById("feedback");f.classList.remove("hidden");f.className="feedback "+(correct?"good":"bad");
+ f.innerHTML=correct?"✅ "+x.good:"❌ Not quite. The safer/business-appropriate choice is: <b>"+x.opts[x.correct]+"</b>.";
+ document.getElementById("next").classList.remove("hidden");
+ document.querySelectorAll(".option").forEach(b=>b.disabled=true);update();
+}
+function nextQuestion(){i++;if(i>=questions.length)endGame();else showQuestion();}
+function update(){document.getElementById("money").textContent=rupee(money);document.getElementById("customers").textContent=customers;document.getElementById("security").textContent=security;document.getElementById("score").textContent=score;}
+function endGame(){
+ document.getElementById("game").classList.add("hidden");document.getElementById("end").classList.remove("hidden");
+ document.getElementById("fmoney").textContent=rupee(money);document.getElementById("fcustomers").textContent=customers;document.getElementById("fsecurity").textContent=security+"/100";document.getElementById("fscore").textContent=score;
+ let title=score>=130?"🏆 FinTech Innovator":score>=90?"🥇 FinTech Manager":score>=55?"🥈 Digital Finance Explorer":"📘 FinTech Learner";
+ document.getElementById("finalTitle").textContent=title;
+ document.getElementById("finalText").textContent="You completed all 8 FinTech challenges. Your decisions affected capital, customers, security and your overall score.";
+ document.getElementById("achievement").innerHTML="<b>Skills demonstrated:</b> Digital Payments • Cybersecurity • Digital Lending • Investment • Data Protection • Customer Service";
+}
+</script>
+</body>
+</html>
